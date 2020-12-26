@@ -3,6 +3,7 @@ package  main;
 import java.io .*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -12,6 +13,7 @@ import javax.servlet.http.*;
 public class MainServlet extends HttpServlet {
     private final HashMap<String, ListOfTasks> lists = new HashMap<>();
     private String nameOfUser;
+    private HashMap<String, String> colors = new HashMap<>();
 
     private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -26,8 +28,10 @@ public class MainServlet extends HttpServlet {
         }
         printMain(out);
         if (name != null) {
-            if(!name.equals(nameOfUser))
+            if(!name.equals(nameOfUser)){
                 nameOfUser=name;
+                lists.clear();
+            }
 
             ListOfTasks fromEdit = (ListOfTasks) request.getAttribute("list");
             if (fromEdit != null) {
@@ -36,10 +40,16 @@ public class MainServlet extends HttpServlet {
             String text = request.getParameter("text");
             String id = request.getParameter("id");
             String date = request.getParameter("calendar");
+            String color1 = request.getParameter("color");
+            String idList = request.getParameter("namelist");
+            if(color1!=null && idList!=null){
+                colors.put(idList,color1);
+            }
             String num = request.getParameter("prior");
             String sort = request.getParameter("sort");
             String nameNewList = request.getParameter("newlist");
             String done = request.getParameter("done");
+            String uri = request.getRequestURI();
             String nameOfList;
 
             if(lists.isEmpty()) {
@@ -48,24 +58,40 @@ public class MainServlet extends HttpServlet {
             if(nameNewList!= null){
                 ListOfTasks list = new ListOfTasks(nameNewList);
                 lists.put(nameNewList,list);
+                colors.put(nameNewList,"49b1ca");
             }
-            printWhenLogin(out);
-            out.println("<div>");
-            out.println("<form action=\"?\" method=\"get\">\n" +
-                    "    new list:<input type=\"text\" name=\"newlist\">\n" +
-                    "    <input type=\"submit\" value=\"create\">\n" +
-                    "</form>");
             for (Map.Entry<String,ListOfTasks> it: lists.entrySet()) {
                  nameOfList = it.getKey();
-                out.println("<a href=\"/todolist/"+ nameOfList  +"\">" + nameOfList + "</a>");
+                out.println("<div class=\"row\">\n<div class=\"col\">\n<a href=\"/todolist/"+ nameOfList  +"\">" + nameOfList + "</a></div></div>\n");
             }
+            out.println("<form action=\"?\" method=\"get\">\n" +
+                    "    <input type=\"text\" name=\"newlist\" placeholder=\"Input new list\">\n" +
+                    "    <input type=\"submit\" value=\"create\">\n" +
+                    "</form>");
+            printWhenLogin(out);
             out.println("</div>");
+
             if(!lists.isEmpty()) {
                 for (Map.Entry<String, ListOfTasks> it : lists.entrySet()) {
-                    String uri = request.getRequestURI();
                     nameOfList = it.getKey();
                     if (uri.contains(nameOfList)) {
+                        out.println("<div class=\"col right text-center\" style=\"background-color: #" +colors.get(nameOfList) +";\" id=\""+nameOfList+"\">\n");
+                        out.println("<div class=\"row text-center\"> <div class=\"row\">\n<h2>"+ nameOfList  +"</h2></div>\n");
+                        out.println("<div class=\"row\">\n<div class=\"col\">\n<input type=\"color\"id=\"color\">\n</div></div>\n");
+                        out.println("<div class=\"row text-center\">\n");
+                        out.println("<div class=\"col text-center\">\n");
                         printSort(out);
+                        out.println("<table class=\"table\">\n");
+                        out.println("<thead>\n" +
+                                "    <tr>\n" +
+                                "      <th scope=\"col\">Description</th>\n" +
+                                "      <th scope=\"col\">Date of Creation</th>\n" +
+                                "      <th scope=\"col\">Deadline</th>\n" +
+                                "      <th scope=\"col\">Priority</th>\n" +
+                                "      <th scope=\"col\"></th>\n" +
+                                "    </tr>\n" +
+                                "  </thead>");
+                        out.println("<tbody>");
                         ListOfTasks list = it.getValue();
                         if (id != null && done == null) {
                             request.setAttribute("list", list);
@@ -89,15 +115,32 @@ public class MainServlet extends HttpServlet {
                             list.sort(sort);
                         }
                         out.println(list);
-                        printAddTask(out);
+
+                        out.println("</tbody>");
+                        out.println("</table>");
+                        if(!nameOfList.equals("archive"))
+                        printAddTask(out,nameOfList);
+                        out.println("</div>\n");
+                        out.println("</div>\n");
+                        out.println("</div>\n");
                         break;
                     }
                 }
             }
+            out.println("</div>");
         } else {
-           printWhenLogout(out);
-           nameOfUser=null;
+           //printWhenLogout(out);
+            //out.println("</body>\n</html>");
+//            if(nameOfUser !=null)
+//                saveToFile();
+//            lists.clear();
+//           nameOfUser=null;
         }
+        out.println("</div>");
+        out.println("</div>");
+        out.println("<script src=\"../main.js\"></script>");
+        out.println("</body>");
+        out.println("</html>");
 
     }
 
@@ -108,9 +151,12 @@ public class MainServlet extends HttpServlet {
 
         String deadline = req.getParameter("deadline");
         String priority = req.getParameter("priority");
-        String text = req.getParameter("text");
+        String text = req.getParameter("content");
+        String uri = req.getRequestURI();
+        if(uri.contains("color/set")){
 
-        if (deadline != null) {
+        }
+        if (!deadline.equals("")) {
             try {
                 task.setDeadline(formatter.parse(deadline));
             } catch (ParseException e) {
@@ -120,8 +166,9 @@ public class MainServlet extends HttpServlet {
         task.setPriority(Integer.parseInt(priority));
         task.setText(text);
 
-        this.doGet(req, resp);
 
+        PrintWriter out = resp.getWriter();
+        doGet(req,resp);
     }
 
     @Override
@@ -132,7 +179,7 @@ public class MainServlet extends HttpServlet {
 
     private void readFromFile(){
         try {
-            Scanner scanner = new Scanner(new File("/home/kirill/IdeaProjects/to-do-list/src/main/resources/" + nameOfUser + ".txt"));
+            Scanner scanner = new Scanner(new File("C:\\Users\\Дмитрий\\IdeaProjects\\todolist\\src\\main\\resources\\" + nameOfUser + ".txt"));
             lists.put("archive", new ListOfTasks("archive"));
             while (scanner.hasNext()) {
                 String line = scanner.nextLine();
@@ -152,6 +199,7 @@ public class MainServlet extends HttpServlet {
                 } else {
                     lists.get("archive").add(task);
                 }
+                colors.put(nameOfList,"49b1ca");
             }
             scanner.close();
         } catch (FileNotFoundException e) {
@@ -165,13 +213,17 @@ public class MainServlet extends HttpServlet {
                 "<head>\n" +
                 " <meta charset=\\\"UTF-8\\\">\n" +
                 "    <title>TO DO LIST</title>\n" +
-                "<link rel=\"stylesheet\" type=\"text/css\" href=\"/main.css\">"+
+                "<link rel=\"stylesheet\" type=\"text/css\" href=\"../bootstrap.min.css\">\n"+
+                "<link rel=\"stylesheet\" type=\"text/css\" href=\"../main.css\">\n"+
                 "    </head>\n" +
                 "<body>\n" +
+                "<div class=\"p-5 container-fluid\">\n"+
+                "<div class=\"row\">\n"+
+                "<div class=\"col left text-center\">\n"+
                 "<h1>TO DO LIST</h1>");
     }
     private  void printWhenLogin(PrintWriter out) {
-        out.println("<form action=\"LogoutServlet\">\n" +
+        out.println("<form action=\"/LogoutServlet\">\n" +
                 " <button class=\"login\">Logout</button>\n" +
                 "</form>");
 
@@ -185,18 +237,10 @@ public class MainServlet extends HttpServlet {
                 "    <input type=\"submit\" value=\"sort\">\n" +
                 "</form>");
     }
-    private  void printWhenLogout(PrintWriter out){
-        out.println("<form action=\"/login.html\">\n" +
-                " <button class=\"login\">Login</button>\n" +
-                "</form>");
-        out.println("</body>\n</html>");
-        if(nameOfUser !=null)
-        saveToFile();
-        lists.clear();
-    }
-    private  void printAddTask(PrintWriter out){
+
+    private  void printAddTask(PrintWriter out, String name){
         out.println("<form action=\"?\" method=\"get\">\n" +
-                "    Input new task:<input type=\"text\" name=\"text\">\n" +
+                "    <input type=\"text\" placeholder=\"Input new task\" name=\"text\">\n" +
                 "    Deadline:<input type=\"date\" name=\"calendar\">\n" +
                 "   Priority:<input name=\"prior\" value=\"1\" type=\"radio\" > 1\n" +
                 "    <input name=\"prior\" value=\"2\" type=\"radio\" >2\n" +
@@ -217,5 +261,14 @@ public class MainServlet extends HttpServlet {
             e.printStackTrace();
         }
 
+    }
+        private  void printWhenLogout(PrintWriter out){
+        out.println("<form action=\"/login.html\">\n" +
+                " <button class=\"login\">Login</button>\n" +
+                "</form>");
+        out.println("</body>\n</html>");
+        if(nameOfUser !=null)
+        saveToFile();
+        lists.clear();
     }
 }

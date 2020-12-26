@@ -5,11 +5,25 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Objects;
 
 public class Task implements Serializable {
     private int id;
 
     private String text;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return id == task.id && priority == task.priority && isDone == task.isDone && Objects.equals(text, task.text) && Objects.equals(deadline, task.deadline) && Objects.equals(dateOfCreation, task.dateOfCreation) && Objects.equals(formatter, task.formatter);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, text, priority, deadline, dateOfCreation, isDone, formatter);
+    }
 
     private int priority;
     private Date deadline;
@@ -72,9 +86,9 @@ public class Task implements Serializable {
     @Override
     public String toString() {
         if(deadline!=null)
-        return "\n"+ text+"<br>\nDate of creation: " + formatter.format(dateOfCreation) + "<br>\n Deadline: " +formatter.format(deadline) + "<br>\npriority: " + priority;
+        return "\n<th scope=\"row\">"+ text+"</th>\n<td>" + formatter.format(dateOfCreation) + "</td>\n<td>" +formatter.format(deadline) + "</td>\n<td>" + priority+"</td>\n";
         else
-            return "\n"+ text+"\t" + formatter.format(dateOfCreation) + "\t" +"none" + "\t" + priority;
+            return "\n<th scope=\"row\">"+ text+"</th>\n<td>" + formatter.format(dateOfCreation) + "</td>\n<td>None</td>\n<td>" + priority+"</td>\n";
     }
 
     public String getString(){
@@ -107,6 +121,7 @@ public class Task implements Serializable {
     public Date getDeadline() {
         return deadline;
     }
+
     public static Comparator<Task> deadlineComparator = new Comparator<Task>() {
         public int compare(Task t1, Task t2) {
             Date d1 = t1.deadline;

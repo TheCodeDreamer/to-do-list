@@ -12,8 +12,17 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
+
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html");
+        String name = request.getParameter("name");
+        String password = request.getParameter("password");
         try{
-            Scanner scanner = new Scanner(new File("/home/kirill/IdeaProjects/to-do-list/src/main/resources/dataBase.txt"));
+            Scanner scanner = new Scanner(new File("C:\\Users\\Дмитрий\\IdeaProjects\\todolist\\src\\main\\resources\\dataBase.txt"));
             while(scanner.hasNext()){
                 String line = scanner.nextLine();
                 String[] s = line.split(" ");
@@ -25,15 +34,6 @@ public class LoginServlet extends HttpServlet {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html");
-        String name = request.getParameter("name");
-        String password = request.getParameter("password");
-
         PrintWriter out = response.getWriter();
 
         if( password.equals(dataBase.get(name))){
@@ -44,7 +44,7 @@ public class LoginServlet extends HttpServlet {
         else{
 
             request.getRequestDispatcher("login.html").include(request, response);
-            out.print("<div style=\"color: #b50931;\">Sorry, username or password error!</div>");
+            out.print("<div style=\"color: #020113; font-size: 22px;\">Sorry, username or password error!</div>");
             out.println("</html></body>");
 
         }

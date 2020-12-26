@@ -3,8 +3,22 @@ package main;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Objects;
 
 public class ListOfTasks implements Serializable {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ListOfTasks list = (ListOfTasks) o;
+        return Objects.equals(name, list.name) && Objects.equals(tasks, list.tasks);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, tasks);
+    }
+
     public String getName() {
         return name;
     }
@@ -34,9 +48,11 @@ public class ListOfTasks implements Serializable {
     public String toString() {
        StringBuilder sb = new StringBuilder();
         for (Task t :tasks) {
-            sb.append("\n<div>").append("\n<a href=\"/todolist/").append(name).append("?id=").append(t.getId()).append("\">edit</a>")
-                    .append("\n<a href=\"/todolist/").append(name).append("?id=").append(t.getId()).append("&done=").append("true").append("\">done</a>")
-                    .append(t).append("\n</div>");
+            if(!t.isDone())
+            sb.append("\n<tr>").append(t).append("\n<td><a  href=\"/todolist/").append(name).append("?id=").append(t.getId()).append("\" class=\"edit\" >edit</a>")
+                    .append("\n<a href=\"/todolist/").append(name).append("?id=").append(t.getId()).append("&done=").append("true").append("\" class=\"edit\" >done</a>").append("</td>\n</tr>\n");
+            else
+                sb.append("<tr>").append(t).append("\n</tr>\n");
         }
         return  sb.toString();
     }

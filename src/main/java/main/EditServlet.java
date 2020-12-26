@@ -50,12 +50,12 @@ public class EditServlet extends HttpServlet {
             selected = "";
         }
 
-        out.println("<form action=\"/EditServlet\" method=\"POST\">\n" +
+        out.println("<form action=\"/todolist\" method=\"POST\">\n" +
                 "<input type=\"text\" hidden value=\"" + list.getName() + "\" name=\"listName\">" +
                 "<input type=\"text\" hidden value=\"" + id + "\" name=\"id\">" +
                 "    <label>Description</label>\n" +
                 "    <br/>\n" +
-                "    <textarea cols=\"50\" rows=\"5\" name=\"text\">" + content + "</textarea>\n" +
+                "    <textarea cols=\"50\" rows=\"5\" name=\"content\">" + content + "</textarea>\n" +
                 "    <br/><br/>\n" +
                 "    <label>Priority</label>\n" +
                 "    <br/>\n" +

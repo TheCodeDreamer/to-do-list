@@ -42,7 +42,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>LogoutServlet</servlet-name>
-        <url-pattern>/todolist/LogoutServlet</url-pattern>
+        <url-pattern>/LogoutServlet</url-pattern>
     </servlet-mapping>
     <servlet>
         <servlet-name>RegistrationServlet</servlet-name>
