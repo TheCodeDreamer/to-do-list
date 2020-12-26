@@ -37,7 +37,7 @@ public class LoginServlet extends HttpServlet {
         else{
 
             request.getRequestDispatcher("login.html").include(request, response);
-            out.print("<div style=\"color: #b50931;\">Sorry, username or password error!</div>");
+            out.print("<div style=\"color: #020113; font-size: 22px;\">Sorry, username or password error!</div>");
             out.println("</html></body>");
 
         }

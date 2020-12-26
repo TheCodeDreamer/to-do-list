@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>TO DO LIST</title>
+    <link rel="stylesheet" type="text/css" href="login.css">
 </head>
 <body>
 <form action="/LoginServlet" method="post">
-    <h3>Login</h3>
-    Name:<input type="text" name="name"><br>
-    Password:<input type="password" name="password"><br>
-    <input type="submit" value="Sign in">
-    <button type="submit" formaction="/registration.html">Sign up</button>
+    <h1>Login</h1>
+    <p>Name</p><input type="text" placeholder="Enter name" name="name"><br>
+    <p>Password</p><input type="password" placeholder="Enter password" name="password"><br>
+    <input type="submit" class="login" value="Sign in">
+    <button type="submit" class="login" formaction="/registration.html">Sign up</button>
 </form>

@@ -37,12 +37,12 @@ public class RegistrationServlet extends HttpServlet {
         String password2 = request.getParameter("password2");
         if(!password.equals(password2)){
             request.getRequestDispatcher("registration.html").include(request, response);
-            out.print("<div style=\"color: #b50931;\">Sorry, Passwords do not match!</div>");
+            out.print("<div style=\"color: #020113; font-size: 22px;\">Sorry, Passwords do not match!</div>");
             out.println("</html></body>");
         }
         else if(dataBase.containsKey(name)){
             request.getRequestDispatcher("registration.html").include(request, response);
-            out.print("<div style=\"color: #b50931;\">Sorry, This name is already in use!</div>");
+            out.print("<div style=\"color: #020113; font-size: 22px;\">Sorry, This name is already in use!</div>");
             out.println("</html></body>");
         }
         else {

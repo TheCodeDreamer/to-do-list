@@ -22,7 +22,7 @@ public class ListOfTasks {
     public String toString() {
        StringBuilder sb = new StringBuilder();
         for (Task t :tasks) {
-            sb.append("\n<div>").append("\n<a href=\"/todolist/").append(name).append("?id=").append(t.getId()).append("\">edit</a>").append(t).append("\\n</div>");
+            sb.append("\n<div>").append("\n<a href=\"/todolist/").append(name).append("?id=").append(t.getId()).append("\">edit</a>").append(t).append("\n</div>");
         }
         return  sb.toString();
     }

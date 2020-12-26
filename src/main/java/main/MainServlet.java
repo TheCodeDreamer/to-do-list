@@ -14,7 +14,9 @@ public class MainServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html");
+        request.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html; charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
         HttpSession session = request.getSession(false);
         printMain(out);
@@ -112,8 +114,8 @@ public class MainServlet extends HttpServlet {
                 "<head>\n" +
                 " <meta charset=\\\"UTF-8\\\">\n" +
                 "    <title>TO DO LIST</title>\n" +
-                "<link rel=\"stylesheet\" type=\"text/css\" href=\"main.css\">"+
-                "    </head>\n" +
+                "<link rel=\"stylesheet\" type=\"text/css\" href=\"../main.css\">"+
+                "    \n</head>\n" +
                 "<body>\n" +
                 "<h1>TO DO LIST</h1>");
     }
