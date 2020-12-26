@@ -10,6 +10,6 @@ public class LogoutServlet extends HttpServlet {
         response.setContentType("text/html");
         HttpSession session = request.getSession();
         session.invalidate();
-        response.sendRedirect("/todolist/");
+        response.sendRedirect("/login.html");
     }
 }

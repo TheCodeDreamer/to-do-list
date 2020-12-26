@@ -1,6 +1,3 @@
-dima 123
+dima 1
 d 1
-d2 1
-kirill 123
-dim 123
- 
+maks 1

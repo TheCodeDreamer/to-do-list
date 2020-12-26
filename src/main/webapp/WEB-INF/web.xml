@@ -29,12 +29,20 @@
         <url-pattern>/AddServlet</url-pattern>
     </servlet-mapping>
     <servlet>
+        <servlet-name>EditServlet</servlet-name>
+        <servlet-class>main.EditServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>EditServlet</servlet-name>
+        <url-pattern>/EditServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
         <servlet-name>LogoutServlet</servlet-name>
         <servlet-class>authorization.LogoutServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>LogoutServlet</servlet-name>
-        <url-pattern>/todolist/LogoutServlet</url-pattern>
+        <url-pattern>/LogoutServlet</url-pattern>
     </servlet-mapping>
     <servlet>
         <servlet-name>RegistrationServlet</servlet-name>

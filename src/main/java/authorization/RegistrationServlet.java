@@ -49,7 +49,7 @@ public class RegistrationServlet extends HttpServlet {
             FileWriter writer = new FileWriter("C:\\Users\\Дмитрий\\IdeaProjects\\todolist\\src\\main\\resources\\dataBase.txt", true);
             writer.write("\n" + name + " " + password);
             writer.close();
-            File newFile  = new File("C:\\Users\\Дмитрий\\IdeaProjects\\todolist\\src\\main\\resources\\" + name+ ".txt");
+            File newFile  = new File("C:\\Users\\Дмитрий\\IdeaProjects\\todolist\\src\\main\\resources\\" + name + ".txt");
             newFile.createNewFile();
             HttpSession session = request.getSession();
             session.setAttribute("name", name);

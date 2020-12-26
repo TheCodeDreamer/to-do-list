@@ -1,0 +1,53 @@
+body{
+    background-image: url(bg.jpg);
+    background-size:100%;
+    background-repeat: no-repeat;
+    background-color: #e7f1f1;
+
+}
+.left{
+    border: 1px solid rgb(44, 232, 238);
+    background-color: rgba(36, 133, 176, 0.6);
+}
+.right{
+    border: 1px solid rgb(104, 153, 58);
+}
+a{
+    text-decoration: none;
+    text-transform: uppercase;
+    font-family: "Roboto Light", sans-serif;
+    font-size: 22px;
+    color: black;
+}
+a:hover {
+    color: #fac8c8;
+}
+#color{
+    width: 50px;
+}
+.edit{
+    text-decoration: none;
+    font-family: "Roboto Light", sans-serif;
+    font-size: 14px;
+    color: black;
+}
+.login{
+
+    background-color: #2b5e8d;
+    border: none;
+    color: white;
+    padding: 16px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 40px 15px 40px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+    border-radius: 12px;
+}
+.login:hover {
+    background-color: white;
+    color: black;
+    border: 2px solid #85dce3;
+}
