@@ -14,7 +14,7 @@ public class RegistrationServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         try{
-            Scanner scanner = new Scanner(new File("C:\\Users\\Дмитрий\\IdeaProjects\\todolist\\src\\main\\resources\\dataBase.txt"));
+            Scanner scanner = new Scanner(new File("/home/kirill/IdeaProjects/to-do-list/src/main/resources/dataBase.txt"));
             while(scanner.hasNext()){
                 String line = scanner.nextLine();
                 String[] s = line.split(" ");
@@ -46,10 +46,10 @@ public class RegistrationServlet extends HttpServlet {
             out.println("</html></body>");
         }
         else {
-            FileWriter writer = new FileWriter("C:\\Users\\Дмитрий\\IdeaProjects\\todolist\\src\\main\\resources\\dataBase.txt", true);
+            FileWriter writer = new FileWriter("/home/kirill/IdeaProjects/to-do-list/src/main/resources/dataBase.txt", true);
             writer.write("\n" + name + " " + password);
             writer.close();
-            File newFile  = new File("C:\\Users\\Дмитрий\\IdeaProjects\\todolist\\src\\main\\resources\\" + name+ ".txt");
+            File newFile  = new File("/home/kirill/IdeaProjects/to-do-list/src/main/resources/" + name + ".txt");
             newFile.createNewFile();
             HttpSession session = request.getSession();
             session.setAttribute("name", name);

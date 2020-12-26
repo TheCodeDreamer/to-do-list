@@ -7,11 +7,13 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 public class LoginServlet extends HttpServlet {
+
     private HashMap<String,String> dataBase = new HashMap<>();
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+
+    @Override
+    public void init() throws ServletException {
         try{
-            Scanner scanner = new Scanner(new File("C:\\Users\\Дмитрий\\IdeaProjects\\todolist\\src\\main\\resources\\dataBase.txt"));
+            Scanner scanner = new Scanner(new File("/home/kirill/IdeaProjects/to-do-list/src/main/resources/dataBase.txt"));
             while(scanner.hasNext()){
                 String line = scanner.nextLine();
                 String[] s = line.split(" ");
@@ -23,6 +25,11 @@ public class LoginServlet extends HttpServlet {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         response.setContentType("text/html");
         String name = request.getParameter("name");
         String password = request.getParameter("password");

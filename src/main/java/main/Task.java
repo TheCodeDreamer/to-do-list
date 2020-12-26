@@ -1,21 +1,26 @@
 package main;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
 
-public class Task {
+public class Task implements Serializable {
     private int id;
+
     private String text;
+
     private int priority;
     private Date deadline;
     private Date dateOfCreation;
+    private boolean isDone;
     private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
     public Task(int id, String deadline, String text, String priority) {
         this.id = id;
         this.text = text;
+        this.isDone = false;
         if(priority!=null)
             this.priority = Integer.parseInt(priority);
         else
@@ -28,9 +33,11 @@ public class Task {
             e.printStackTrace();
         }
     }
-    public Task(int id, String dateOfCreation, String deadline,String text,  String priority) {
+
+    public Task(int id, String dateOfCreation, String deadline, boolean isDone, String text,  String priority) {
         this.id = id;
         this.text = text;
+        this.isDone = isDone;
         this.priority = Integer.parseInt(priority);
         try {
             if(!deadline.equals("none"))
@@ -40,13 +47,22 @@ public class Task {
             e.printStackTrace();
         }
     }
+
     public Task(int id, String priority, String text) {
         this.text=text;
+        this.isDone = false;
         if(priority!=null)
             this.priority = Integer.parseInt(priority);
         else
             this.priority = 2;
         this.id =id;
+    }
+    public boolean isDone() {
+        return isDone;
+    }
+
+    public void setDone(boolean done) {
+        isDone = done;
     }
 
     public int getId() {
@@ -63,13 +79,17 @@ public class Task {
 
     public String getString(){
         if(deadline!=null)
-            return formatter.format(dateOfCreation)+ " " + formatter.format(deadline)+ " "+priority+  "\n"+ text+"\n";
+            return formatter.format(dateOfCreation)+ " " + formatter.format(deadline)+ " " + isDone + " " + priority +  "\n" + text + "\n";
         else
-            return formatter.format(dateOfCreation)+ " " + "none "+priority+  "\n"+ text+"\n";
+            return formatter.format(dateOfCreation)+ " " + "none " + isDone + " " +priority+  "\n"+ text+"\n";
     }
 
     public int getPriority() {
         return priority;
+    }
+
+    public String getText() {
+        return text;
     }
 
     public void setText(String text) {

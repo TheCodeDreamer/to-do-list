@@ -1,6 +1,8 @@
 package  main;
 
 import java.io .*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -8,26 +10,38 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 public class MainServlet extends HttpServlet {
-    private HashMap<String, ListOfTasks> lists = new HashMap<>();
+    private final HashMap<String, ListOfTasks> lists = new HashMap<>();
     private String nameOfUser;
 
+    private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
         HttpSession session = request.getSession(false);
-        printMain(out);
+        String name = null;
         if (session != null) {
-            String name = (String) session.getAttribute("name");
+            name = (String) session.getAttribute("name");
+        }
+        printMain(out);
+        if (name != null) {
             if(!name.equals(nameOfUser))
                 nameOfUser=name;
+
+            ListOfTasks fromEdit = (ListOfTasks) request.getAttribute("list");
+            if (fromEdit != null) {
+                lists.put(fromEdit.getName(), fromEdit);
+            }
             String text = request.getParameter("text");
+            String id = request.getParameter("id");
             String date = request.getParameter("calendar");
             String num = request.getParameter("prior");
             String sort = request.getParameter("sort");
             String nameNewList = request.getParameter("newlist");
-            String nameOfList="";
+            String done = request.getParameter("done");
+            String nameOfList;
+
             if(lists.isEmpty()) {
                 readFromFile();
             }
@@ -35,7 +49,7 @@ public class MainServlet extends HttpServlet {
                 ListOfTasks list = new ListOfTasks(nameNewList);
                 lists.put(nameNewList,list);
             }
-            printWhenLogin(out,request,response);
+            printWhenLogin(out);
             out.println("<div>");
             out.println("<form action=\"?\" method=\"get\">\n" +
                     "    new list:<input type=\"text\" name=\"newlist\">\n" +
@@ -53,6 +67,18 @@ public class MainServlet extends HttpServlet {
                     if (uri.contains(nameOfList)) {
                         printSort(out);
                         ListOfTasks list = it.getValue();
+                        if (id != null && done == null) {
+                            request.setAttribute("list", list);
+                            request.setAttribute("id", id);
+                            RequestDispatcher requestDispatcher = request.getRequestDispatcher("/EditServlet");
+                            requestDispatcher.forward(request, response);
+                        }
+                        if (id != null && done != null) {
+                            Task task = list.getTask(Integer.parseInt(id));
+                            task.setDone(true);
+                            lists.get("archive").add(task);
+                            list.remove(task);
+                        }
                         if (text != null) {
                             if (date != null || !date.isEmpty())
                                 list.add(new Task(list.size(), date, text, num));
@@ -76,6 +102,29 @@ public class MainServlet extends HttpServlet {
     }
 
     @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        ListOfTasks list = lists.get(req.getParameter("listName"));
+        Task task = list.getTask(Integer.parseInt(req.getParameter("id")));
+
+        String deadline = req.getParameter("deadline");
+        String priority = req.getParameter("priority");
+        String text = req.getParameter("text");
+
+        if (deadline != null) {
+            try {
+                task.setDeadline(formatter.parse(deadline));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        task.setPriority(Integer.parseInt(priority));
+        task.setText(text);
+
+        this.doGet(req, resp);
+
+    }
+
+    @Override
     public void destroy() {
         if(nameOfUser !=null)
             saveToFile();
@@ -83,7 +132,8 @@ public class MainServlet extends HttpServlet {
 
     private void readFromFile(){
         try {
-            Scanner scanner = new Scanner(new File("C:\\Users\\Дмитрий\\IdeaProjects\\todolist\\src\\main\\resources\\" + nameOfUser + ".txt"));
+            Scanner scanner = new Scanner(new File("/home/kirill/IdeaProjects/to-do-list/src/main/resources/" + nameOfUser + ".txt"));
+            lists.put("archive", new ListOfTasks("archive"));
             while (scanner.hasNext()) {
                 String line = scanner.nextLine();
                 String[] s = line.split(" ");
@@ -92,13 +142,16 @@ public class MainServlet extends HttpServlet {
                 ListOfTasks list;
                 if (lists.containsKey(nameOfList)) {
                     list = lists.get(nameOfList);
-                    list.add(new Task(list.size(), s[1], s[2], text, s[3]));
                 } else {
                     list = new ListOfTasks(nameOfList);
-                    list.add(new Task(list.size(), s[1], s[2], text, s[3]));
-
                 }
-                lists.put(nameOfList, list);
+                Task task = new Task(list.size(), s[1], s[2], Boolean.parseBoolean(s[3]), text, s[4]);
+                if (!task.isDone()) {
+                    list.add(task);
+                    lists.put(nameOfList, list);
+                } else {
+                    lists.get("archive").add(task);
+                }
             }
             scanner.close();
         } catch (FileNotFoundException e) {
@@ -112,12 +165,12 @@ public class MainServlet extends HttpServlet {
                 "<head>\n" +
                 " <meta charset=\\\"UTF-8\\\">\n" +
                 "    <title>TO DO LIST</title>\n" +
-                "<link rel=\"stylesheet\" type=\"text/css\" href=\"main.css\">"+
+                "<link rel=\"stylesheet\" type=\"text/css\" href=\"/main.css\">"+
                 "    </head>\n" +
                 "<body>\n" +
                 "<h1>TO DO LIST</h1>");
     }
-    private  void printWhenLogin(PrintWriter out,HttpServletRequest request,HttpServletResponse response ) throws ServletException, IOException {
+    private  void printWhenLogin(PrintWriter out) {
         out.println("<form action=\"LogoutServlet\">\n" +
                 " <button class=\"login\">Logout</button>\n" +
                 "</form>");
